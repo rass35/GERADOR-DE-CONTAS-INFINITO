@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gerador de Comandos</title>
+<title>Gerador de Contas InfinitCast</title>
 <style>
 /* Estilos combinados de ambos os arquivos */
 :root {
@@ -46,7 +46,12 @@ header h1 {
   color: var(--primary);
   font-size: 2.4rem;
   margin-bottom: 8px;
-  cursor: pointer; /* Adicionado para indicar que o título é clicável */
+  cursor: pointer;
+  font-weight: bold; /* Título em negrito */
+}
+
+header h1::before {
+  content: '🔑 ';
 }
 
 header p {
@@ -69,6 +74,12 @@ header p {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(255, 0, 0, 0.2);
 }
 
 .card h2 {
@@ -78,11 +89,36 @@ header p {
 }
 
 .card-details {
-    margin-top: 8px;
-    font-size: 0.9em;
-    color: var(--muted);
-    word-break: break-all;
-    flex-grow: 1;
+  margin-top: 8px;
+  font-size: 0.9em;
+  color: var(--muted);
+  word-break: break-all;
+  flex-grow: 1;
+}
+
+/* Estilos para a imagem do produto */
+.product-image {
+  max-width: 150px;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 10px;
+  margin: 0 auto 12px auto; /* Centraliza a imagem e adiciona margem inferior */
+  background-color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .product-image img {
+  transform: scale(1.1);
 }
 
 .btn {
@@ -100,7 +136,7 @@ header p {
 }
 
 .btn:hover {
-    background: var(--highlight);
+  background: var(--highlight);
 }
 
 .btn-small {
@@ -127,17 +163,17 @@ input, select, textarea {
 }
 
 .form-card {
-    background: var(--card);
-    padding: 20px;
-    border-radius: 14px;
-    border: 1px solid var(--border-color);
-    margin-bottom: 20px;
+  background: var(--card);
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 20px;
 }
 
 .form-card h3 {
-    color: var(--primary);
-    margin-bottom: 15px;
-    text-align: center;
+  color: var(--primary);
+  margin-bottom: 15px;
+  text-align: center;
 }
 
 /* Estilos do Modal */
@@ -161,12 +197,12 @@ input, select, textarea {
 }
 
 .modal h3 {
-    color: var(--primary);
-    margin-bottom: 15px;
+  color: var(--primary);
+  margin-bottom: 15px;
 }
 
 .modal p {
-    line-height: 1.6;
+  line-height: 1.6;
 }
 
 .generated-code {
@@ -185,37 +221,38 @@ input, select, textarea {
 
 <!-- Visualização do Gerador -->
 <main id="generatorView">
-    <header class="container">
-        <h1>🔧 Gerador de Comandos</h1>
-        <p>Clique em <strong>Gerar</strong> para ver Email, Senha e Link (apenas os que foram preenchidos no admin).</p>
-    </header>
-    <div class="container">
-        <div class="grid" id="generatorGrid"></div>
-    </div>
+  <header class="container">
+    <h1>Gerador de Contas InfinitCast</h1>
+  </header>
+  <div class="container">
+    <div class="grid" id="generatorGrid"></div>
+  </div>
 </main>
 
 <!-- Visualização do Admin -->
 <main id="adminView" style="display: none;">
-    <header class="container">
-        <h1>⚙️ Painel Admin — Gerador</h1>
-        <p>Adicione, edite ou exclua produtos. Apenas campos preenchidos serão exibidos no site.</p>
-        <button id="backToGeneratorBtn" class="btn" style="width: auto; padding: 10px 20px; margin-top: 20px; background: #555;">Voltar para o Gerador</button>
-    </header>
-    <div class="container">
-        <div class="form-card">
-            <h3 id="formCardTitle">Adicionar Novo Produto</h3>
-            <input type="text" id="nome" placeholder="Nome do Produto *" required>
-            <input type="text" id="categoria" placeholder="Categoria *" required>
-            <textarea id="email" rows="3" placeholder="Emails (um por linha, opcional)"></textarea>
-            <textarea id="senha" rows="3" placeholder="Senhas (uma por linha, opcional)"></textarea>
-            <textarea id="link" rows="3" placeholder="Links (um por linha, opcional)"></textarea>
-            <div id="formButtons">
-                <button class="btn" id="addProduto">Adicionar</button>
-            </div>
-        </div>
-        <h3>Produtos Cadastrados</h3>
-        <div class="grid" id="adminGrid"></div>
+  <header class="container">
+    <h1>⚙️ Painel Admin — Gerador</h1>
+    <p>Adicione, edite ou exclua produtos. Apenas campos preenchidos serão exibidos no site.</p>
+    <button id="backToGeneratorBtn" class="btn" style="width: auto; padding: 10px 20px; margin-top: 20px; background: #555;">Voltar para o Gerador</button>
+  </header>
+  <div class="container">
+    <div class="form-card">
+      <h3 id="formCardTitle">Adicionar Novo Produto</h3>
+      <input type="text" id="nome" placeholder="Nome do Produto *" required>
+      <input type="text" id="categoria" placeholder="Categoria *" required>
+      <!-- NOVO: Campo para URL da imagem -->
+      <input type="url" id="imagem" placeholder="URL da Imagem (opcional)">
+      <textarea id="email" rows="3" placeholder="Emails (um por linha, opcional)"></textarea>
+      <textarea id="senha" rows="3" placeholder="Senhas (um por linha, opcional)"></textarea>
+      <textarea id="link" rows="3" placeholder="Links (um por linha, opcional)"></textarea>
+      <div id="formButtons">
+        <button class="btn" id="addProduto">Adicionar</button>
+      </div>
     </div>
+    <h3>Produtos Cadastrados</h3>
+    <div class="grid" id="adminGrid"></div>
+  </div>
 </main>
 
 <!-- Modal de Geração -->
@@ -242,276 +279,337 @@ input, select, textarea {
   </div>
 </div>
 
+<!-- Modal de Senha para Acesso Admin -->
+<div class="modal-backdrop" id="passwordPromptModal">
+  <div class="modal">
+    <h3>Acesso Restrito</h3>
+    <p>Insira a senha para acessar o painel de administração.</p>
+    <input type="password" id="passwordInput" placeholder="Senha" style="margin-top: 15px;">
+    <p id="passwordError" style="color: var(--highlight); display: none; margin-top: 5px; font-size: 0.9em;"></p>
+    <div class="flex-row" style="margin-top: 20px;">
+      <button class="btn" id="submitPasswordBtn" style="background: var(--primary);">Acessar</button>
+      <button class="btn" id="cancelPasswordBtn" style="background: #555;">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // --- ESTADO COMPARTILHADO ---
-    let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
-    let editingIndex = null;
-    let itemIndexToDelete = null;
+  // --- ESTADO COMPARTILHADO ---
+  let produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+  let editingIndex = null;
+  let itemIndexToDelete = null;
+  const adminPassword = "bras87"; // Senha para acesso ao admin
 
-    // --- ELEMENTOS DO DOM ---
-    const generatorView = document.getElementById("generatorView");
-    const adminView = document.getElementById("adminView");
-    const generatorTitle = document.querySelector("#generatorView h1");
-    const backToGeneratorBtn = document.getElementById("backToGeneratorBtn");
+  // --- ELEMENTOS DO DOM ---
+  const generatorView = document.getElementById("generatorView");
+  const adminView = document.getElementById("adminView");
+  const generatorTitle = document.querySelector("#generatorView h1");
+  const backToGeneratorBtn = document.getElementById("backToGeneratorBtn");
 
-    // Elementos do Gerador
-    const generatorGrid = document.getElementById("generatorGrid");
-    const modalBackdrop = document.getElementById("modalBackdrop");
-    const generatedCodeEl = document.getElementById("generatedCode");
-    const copyModalBtn = document.getElementById("copyModal");
-    const closeModalBtn = document.getElementById("closeModal");
+  // Elementos do Gerador
+  const generatorGrid = document.getElementById("generatorGrid");
+  const modalBackdrop = document.getElementById("modalBackdrop");
+  const generatedCodeEl = document.getElementById("generatedCode");
+  const copyModalBtn = document.getElementById("copyModal");
+  const closeModalBtn = document.getElementById("closeModal");
 
-    // Elementos do Admin
-    const adminGrid = document.getElementById("adminGrid");
-    const formCardTitle = document.getElementById("formCardTitle");
-    const formButtonsContainer = document.getElementById("formButtons");
-    const nomeInput = document.getElementById("nome");
-    const categoriaInput = document.getElementById("categoria");
-    const emailInput = document.getElementById("email");
-    const senhaInput = document.getElementById("senha");
-    const linkInput = document.getElementById("link");
-    const addProdutoBtn = document.getElementById("addProduto");
+  // Elementos do Admin
+  const adminGrid = document.getElementById("adminGrid");
+  const formCardTitle = document.getElementById("formCardTitle");
+  const formButtonsContainer = document.getElementById("formButtons");
+  const nomeInput = document.getElementById("nome");
+  const categoriaInput = document.getElementById("categoria");
+  const imagemInput = document.getElementById("imagem");
+  const emailInput = document.getElementById("email");
+  const senhaInput = document.getElementById("senha");
+  const linkInput = document.getElementById("link");
+  const addProdutoBtn = document.getElementById("addProduto");
 
-    // Elementos do Modal de Exclusão
-    const deleteConfirmModal = document.getElementById("deleteConfirmModal");
-    const deleteConfirmText = document.getElementById("deleteConfirmText");
-    const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
-    const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+  // Elementos do Modal de Exclusão
+  const deleteConfirmModal = document.getElementById("deleteConfirmModal");
+  const deleteConfirmText = document.getElementById("deleteConfirmText");
+  const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+  const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
 
-    // --- LÓGICA DE ALTERNÂNCIA DE VISUALIZAÇÃO ---
-    let clickCount = 0;
-    let clickTimer = null;
+  // Novos elementos do Modal de Senha
+  const passwordPromptModal = document.getElementById("passwordPromptModal");
+  const passwordInput = document.getElementById("passwordInput");
+  const submitPasswordBtn = document.getElementById("submitPasswordBtn");
+  const cancelPasswordBtn = document.getElementById("cancelPasswordBtn");
+  const passwordError = document.getElementById("passwordError");
 
-    generatorTitle.addEventListener('click', () => {
-        clickCount++;
-        if (clickTimer) clearTimeout(clickTimer);
-        clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
-        if (clickCount === 7) {
-            clickCount = 0;
-            clearTimeout(clickTimer);
-            generatorView.style.display = "none";
-            adminView.style.display = "block";
-        }
-    });
 
-    backToGeneratorBtn.addEventListener('click', () => {
-        generatorView.style.display = "block";
-        adminView.style.display = "none";
-        resetForm();
-    });
+  // --- LÓGICA DE ALTERNÂNCIA DE VISUALIZAÇÃO ---
+  let clickCount = 0;
+  let clickTimer = null;
 
-    // --- FUNÇÕES DE RENDERIZAÇÃO ---
-    function renderGeneratorCards() {
-        generatorGrid.innerHTML = "";
-        if (produtos.length === 0) {
-            generatorGrid.innerHTML = "<p>Nenhum produto cadastrado. Clique 5x no título acima para ir ao Painel Admin e adicionar produtos.</p>";
-            return;
-        }
-        produtos.forEach((p) => {
-            const card = document.createElement("div");
-            card.className = "card";
-            card.innerHTML = `<h2>🔐 ${p.nome} (${p.categoria})</h2><button class="btn">Gerar</button>`;
-            card.querySelector("button").addEventListener("click", () => {
-                // Lógica de geração de código aprimorada
-                let output = "";
-                const emails = (p.email || "").split('\n').filter(Boolean);
-                const senhas = (p.senha || "").split('\n').filter(Boolean);
-                const links = (p.link || "").split('\n').filter(Boolean);
-
-                const maxLength = Math.max(emails.length, senhas.length, links.length);
-                for(let i = 0; i < maxLength; i++){
-                  if(emails[i]) output += `Email: ${emails[i]}\n`;
-                  if(senhas[i]) output += `Senha: ${senhas[i]}\n`;
-                  if(links[i]) output += `Link: ${links[i]}\n`;
-                  if (i < maxLength - 1) output += "\n";
-                }
-
-                if (output.trim() === "") {
-                    generatedCodeEl.innerText = "Nenhum dado para exibir.";
-                } else {
-                    generatedCodeEl.innerText = output.trim();
-                }
-
-                modalBackdrop.style.display = "flex";
-            });
-            generatorGrid.appendChild(card);
-        });
+  generatorTitle.addEventListener('click', () => {
+    clickCount++;
+    if (clickTimer) clearTimeout(clickTimer);
+    clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
+    // Alterado para 5 cliques para abrir o modal de senha
+    if (clickCount === 5) {
+      clickCount = 0;
+      clearTimeout(clickTimer);
+      passwordPromptModal.style.display = "flex";
+      passwordInput.focus();
     }
-
-    function renderAdminGrid() {
-        adminGrid.innerHTML = "";
-        if (produtos.length === 0) {
-            adminGrid.innerHTML = "<p>Nenhum produto cadastrado.</p>";
-            return;
-        }
-        produtos.forEach((p, index) => {
-            const card = document.createElement("div");
-            card.className = "card";
-            card.innerHTML = `
-                <div>
-                    <h2>${p.nome} (${p.categoria})</h2>
-                    <div class="card-details">
-                        ${p.email ? "Email(s): <br>" + p.email.split('\n').filter(Boolean).map(e => "› " + e).join("<br>") + "<br>" : ""}
-                        ${p.senha ? "Senha(s): <br>" + p.senha.split('\n').filter(Boolean).map(s => "› " + '•'.repeat(s.length)).join("<br>") + "<br>" : ""}
-                        ${p.link ? "Link(s): <br>" + p.link.split('\n').filter(Boolean).map(l => "› " + l).join("<br>") : ""}
-                    </div>
-                </div>
-                <div class="flex-row">
-                    <button class="btn btn-small edit">Editar</button>
-                    <button class="btn btn-small delete" style="background:#555">Excluir</button>
-                </div>`;
-            
-            card.querySelector(".edit").addEventListener("click", () => {
-                editingIndex = index;
-                nomeInput.value = p.nome;
-                categoriaInput.value = p.categoria;
-                emailInput.value = p.email || '';
-                senhaInput.value = p.senha || '';
-                linkInput.value = p.link || '';
-                formCardTitle.textContent = "Editando Produto";
-                addProdutoBtn.textContent = "Salvar Alterações";
-                
-                if (!document.getElementById('cancelEditBtn')) {
-                    const cancelBtn = document.createElement('button');
-                    cancelBtn.id = 'cancelEditBtn';
-                    cancelBtn.textContent = 'Cancelar';
-                    cancelBtn.className = 'btn';
-                    cancelBtn.style.background = '#555';
-                    cancelBtn.addEventListener('click', resetForm);
-                    formButtonsContainer.appendChild(cancelBtn);
-                }
-                formCardTitle.scrollIntoView({ behavior: 'smooth' });
-            });
-
-            card.querySelector(".delete").addEventListener("click", () => {
-                itemIndexToDelete = index;
-                deleteConfirmText.textContent = `Você tem certeza que deseja excluir "${p.nome}"?`;
-                deleteConfirmModal.style.display = 'flex';
-            });
-            adminGrid.appendChild(card);
-        });
+  });
+  
+  // Evento de clique para o botão de acesso ao admin
+  submitPasswordBtn.addEventListener('click', () => {
+    if (passwordInput.value === adminPassword) {
+      passwordPromptModal.style.display = "none";
+      generatorView.style.display = "none";
+      adminView.style.display = "block";
+      passwordError.style.display = "none";
+      resetForm();
+      renderAdminGrid(); // Força a renderização para mostrar os produtos
+    } else {
+      passwordError.textContent = "Senha incorreta. Tente novamente.";
+      passwordError.style.display = "block";
+      passwordInput.value = "";
+      passwordInput.focus();
     }
-    
-    // --- MANIPULADORES DE DADOS E EVENTOS ---
-    function saveAndRerender() {
-        localStorage.setItem("produtos", JSON.stringify(produtos));
-        renderGeneratorCards();
-        renderAdminGrid();
-    }
+  });
 
-    function resetForm() {
-        nomeInput.value = "";
-        categoriaInput.value = "";
-        emailInput.value = "";
-        senhaInput.value = "";
-        linkInput.value = "";
-        editingIndex = null;
-        formCardTitle.textContent = "Adicionar Novo Produto";
-        addProdutoBtn.textContent = "Adicionar";
-        document.getElementById('cancelEditBtn')?.remove();
-    }
+  // Evento de clique para cancelar o acesso
+  cancelPasswordBtn.addEventListener('click', () => {
+    passwordPromptModal.style.display = "none";
+    passwordInput.value = "";
+    passwordError.style.display = "none";
+  });
 
-    addProdutoBtn.addEventListener("click", () => {
-        const nome = nomeInput.value.trim();
-        const categoria = categoriaInput.value.trim();
-        if (!nome || !categoria) {
-            if (!nome) nomeInput.style.borderColor = 'red';
-            if (!categoria) categoriaInput.style.borderColor = 'red';
-            setTimeout(() => {
-                nomeInput.style.borderColor = 'var(--border-color)';
-                categoriaInput.style.borderColor = 'var(--border-color)';
-            }, 2000);
-            return;
+  backToGeneratorBtn.addEventListener('click', () => {
+    generatorView.style.display = "block";
+    adminView.style.display = "none";
+    resetForm();
+  });
+
+
+  // --- FUNÇÕES DE RENDERIZAÇÃO ---
+  function renderGeneratorCards() {
+    generatorGrid.innerHTML = "";
+    if (produtos.length === 0) {
+      return;
+    }
+    produtos.forEach((p) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="product-image">
+          <img src="${p.imagem || 'https://placehold.co/400x300/1C1C1E/fff?text=No+Image'}" alt="Imagem do produto ${p.nome}" onerror="this.src='https://placehold.co/400x300/1C1C1E/fff?text=Imagem+Nao+Encontrada';">
+        </div>
+        <h2>🔐 ${p.nome} (${p.categoria})</h2>
+        <button class="btn">Gerar</button>
+      `;
+      card.querySelector("button").addEventListener("click", () => {
+        let output = "";
+        const emails = (p.email || "").split('\n').filter(Boolean);
+        const senhas = (p.senha || "").split('\n').filter(Boolean);
+        const links = (p.link || "").split('\n').filter(Boolean);
+
+        const maxLength = Math.max(emails.length, senhas.length, links.length);
+        for(let i = 0; i < maxLength; i++){
+          if(emails[i]) output += `Email: ${emails[i]}\n`;
+          if(senhas[i]) output += `Senha: ${senhas[i]}\n`;
+          if(links[i]) output += `Link: ${links[i]}\n`;
+          if (i < maxLength - 1) output += "\n";
         }
 
-        const produtoData = {
-            nome,
-            categoria,
-            email: emailInput.value.trim(),
-            senha: senhaInput.value.trim(),
-            link: linkInput.value.trim()
-        };
-
-        if (editingIndex !== null) {
-            produtos[editingIndex] = produtoData;
+        if (output.trim() === "") {
+          generatedCodeEl.innerText = "Nenhum dado para exibir.";
         } else {
-            produtos.push(produtoData);
+          generatedCodeEl.innerText = output.trim();
         }
+
+        modalBackdrop.style.display = "flex";
+      });
+      generatorGrid.appendChild(card);
+    });
+  }
+
+  function renderAdminGrid() {
+    adminGrid.innerHTML = "";
+    if (produtos.length === 0) {
+      adminGrid.innerHTML = "<p>Nenhum produto cadastrado.</p>";
+      return;
+    }
+    produtos.forEach((p, index) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div>
+          <div class="product-image">
+            <img src="${p.imagem || 'https://placehold.co/400x300/1C1C1E/fff?text=No+Image'}" alt="Imagem do produto ${p.nome}" onerror="this.src='https://placehold.co/400x300/1C1C1E/fff?text=Imagem+Nao+Encontrada';">
+          </div>
+          <h2>${p.nome} (${p.categoria})</h2>
+          <div class="card-details">
+            ${p.email ? "Email(s): <br>" + p.email.split('\n').filter(Boolean).map(e => "› " + e).join("<br>") + "<br>" : ""}
+            ${p.senha ? "Senha(s): <br>" + p.senha.split('\n').filter(Boolean).map(s => "› " + '•'.repeat(s.length)).join("<br>") + "<br>" : ""}
+            ${p.link ? "Link(s): <br>" + p.link.split('\n').filter(Boolean).map(l => "› " + l).join("<br>") : ""}
+          </div>
+        </div>
+        <div class="flex-row">
+          <button class="btn btn-small edit">Editar</button>
+          <button class="btn btn-small delete" style="background:#555">Excluir</button>
+        </div>`;
+      
+      card.querySelector(".edit").addEventListener("click", () => {
+        editingIndex = index;
+        nomeInput.value = p.nome;
+        categoriaInput.value = p.categoria;
+        imagemInput.value = p.imagem || '';
+        emailInput.value = p.email || '';
+        senhaInput.value = p.senha || '';
+        linkInput.value = p.link || '';
+        formCardTitle.textContent = "Editando Produto";
+        addProdutoBtn.textContent = "Salvar Alterações";
         
-        saveAndRerender();
-        resetForm();
-    });
-
-    // --- LÓGICA DOS MODAIS ---
-    closeModalBtn.addEventListener("click", () => modalBackdrop.style.display = "none");
-    modalBackdrop.addEventListener("click", (e) => { if (e.target === modalBackdrop) modalBackdrop.style.display = "none"; });
-
-    copyModalBtn.addEventListener("click", () => {
-        const textToCopy = generatedCodeEl.innerText;
-        if (!textToCopy || textToCopy === "Nenhum dado para exibir.") return;
-
-        function fallbackCopyTextToClipboard(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.top = "0";
-            textArea.style.left = "0";
-            textArea.style.position = "fixed";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            let successful = false;
-            try {
-                successful = document.execCommand('copy');
-            } catch (err) {
-                successful = false;
-            }
-            document.body.removeChild(textArea);
-            return successful;
+        if (!document.getElementById('cancelEditBtn')) {
+          const cancelBtn = document.createElement('button');
+          cancelBtn.id = 'cancelEditBtn';
+          cancelBtn.textContent = 'Cancelar';
+          cancelBtn.className = 'btn';
+          cancelBtn.style.background = '#555';
+          cancelBtn.addEventListener('click', resetForm);
+          formButtonsContainer.appendChild(cancelBtn);
         }
+        formCardTitle.scrollIntoView({ behavior: 'smooth' });
+      });
 
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                copyModalBtn.textContent = "Copiado!";
-                setTimeout(() => { copyModalBtn.textContent = "Copiar"; }, 2000);
-            }).catch(err => {
-                const success = fallbackCopyTextToClipboard(textToCopy);
-                if (success) {
-                    copyModalBtn.textContent = "Copiado!";
-                } else {
-                    copyModalBtn.textContent = "Erro!";
-                }
-                setTimeout(() => { copyModalBtn.textContent = "Copiar"; }, 2000);
-            });
-        } else {
-            const success = fallbackCopyTextToClipboard(textToCopy);
-            if (success) {
-                copyModalBtn.textContent = "Copiado!";
-            } else {
-                copyModalBtn.textContent = "Erro!";
-            }
-            setTimeout(() => { copyModalBtn.textContent = "Copiar"; }, 2000);
-        }
+      card.querySelector(".delete").addEventListener("click", () => {
+        itemIndexToDelete = index;
+        deleteConfirmText.textContent = `Você tem certeza que deseja excluir "${p.nome}"?`;
+        deleteConfirmModal.style.display = 'flex';
+      });
+      adminGrid.appendChild(card);
     });
-
-    confirmDeleteBtn.addEventListener('click', () => {
-        if (itemIndexToDelete !== null) {
-            produtos.splice(itemIndexToDelete, 1);
-            saveAndRerender();
-        }
-        deleteConfirmModal.style.display = 'none';
-        itemIndexToDelete = null;
-    });
-
-    cancelDeleteBtn.addEventListener('click', () => {
-        deleteConfirmModal.style.display = 'none';
-        itemIndexToDelete = null;
-    });
-    deleteConfirmModal.addEventListener("click", (e) => { if (e.target === deleteConfirmModal) deleteConfirmModal.style.display = "none"; });
-
-    // --- RENDERIZAÇÃO INICIAL ---
+  }
+  
+  // --- MANIPULADORES DE DADOS E EVENTOS ---
+  function saveAndRerender() {
+    localStorage.setItem("produtos", JSON.stringify(produtos));
     renderGeneratorCards();
     renderAdminGrid();
+  }
+
+  function resetForm() {
+    nomeInput.value = "";
+    categoriaInput.value = "";
+    imagemInput.value = "";
+    emailInput.value = "";
+    senhaInput.value = "";
+    linkInput.value = "";
+    editingIndex = null;
+    formCardTitle.textContent = "Adicionar Novo Produto";
+    addProdutoBtn.textContent = "Adicionar";
+    document.getElementById('cancelEditBtn')?.remove();
+  }
+
+  addProdutoBtn.addEventListener("click", () => {
+    const nome = nomeInput.value.trim();
+    const categoria = categoriaInput.value.trim();
+    if (!nome || !categoria) {
+      if (!nome) nomeInput.style.borderColor = 'red';
+      if (!categoria) categoriaInput.style.borderColor = 'red';
+      setTimeout(() => {
+        nomeInput.style.borderColor = 'var(--border-color)';
+        categoriaInput.style.borderColor = 'var(--border-color)';
+      }, 2000);
+      return;
+    }
+
+    const produtoData = {
+      nome,
+      categoria,
+      imagem: imagemInput.value.trim(),
+      email: emailInput.value.trim(),
+      senha: senhaInput.value.trim(),
+      link: linkInput.value.trim()
+    };
+
+    if (editingIndex !== null) {
+      produtos[editingIndex] = produtoData;
+    } else {
+      produtos.push(produtoData);
+    }
+    
+    saveAndRerender();
+    resetForm();
+  });
+
+  // --- LÓGICA DOS MODAIS ---
+  closeModalBtn.addEventListener("click", () => modalBackdrop.style.display = "none");
+  modalBackdrop.addEventListener("click", (e) => { if (e.target === modalBackdrop) modalBackdrop.style.display = "none"; });
+
+  confirmDeleteBtn.addEventListener('click', () => {
+    if (itemIndexToDelete !== null) {
+      produtos.splice(itemIndexToDelete, 1);
+      saveAndRerender();
+    }
+    deleteConfirmModal.style.display = 'none';
+    itemIndexToDelete = null;
+  });
+
+  cancelDeleteBtn.addEventListener('click', () => {
+    deleteConfirmModal.style.display = 'none';
+    itemIndexToDelete = null;
+  });
+  deleteConfirmModal.addEventListener("click", (e) => { if (e.target === deleteConfirmModal) deleteConfirmModal.style.display = "none"; });
+
+  copyModalBtn.addEventListener("click", () => {
+    const textToCopy = generatedCodeEl.innerText;
+    if (!textToCopy || textToCopy === "Nenhum dado para exibir.") return;
+
+    function fallbackCopyTextToClipboard(text) {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      textArea.style.position = "fixed";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      let successful = false;
+      try {
+        successful = document.execCommand('copy');
+      } catch (err) {
+        successful = false;
+      }
+      document.body.removeChild(textArea);
+      return successful;
+    }
+
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        copyModalBtn.textContent = "Copiado!";
+        setTimeout(() => { copyModalBtn.textContent = "Copiar"; }, 2000);
+      }).catch(err => {
+        const success = fallbackCopyTextToClipboard(textToCopy);
+        if (success) {
+          copyModalBtn.textContent = "Copiado!";
+        } else {
+          copyModalBtn.textContent = "Erro!";
+        }
+        setTimeout(() => { copyModalBtn.textContent = "Copiar"; }, 2000);
+      });
+    } else {
+      const success = fallbackCopyTextToClipboard(textToCopy);
+      if (success) {
+        copyModalBtn.textContent = "Copiado!";
+      } else {
+        copyModalBtn.textContent = "Erro!";
+      }
+      setTimeout(() => { copyModalBtn.textContent = "Copiar"; }, 2000);
+    }
+  });
+
+
+  // --- RENDERIZAÇÃO INICIAL ---
+  renderGeneratorCards();
+  renderAdminGrid();
 });
 </script>
 </body>
