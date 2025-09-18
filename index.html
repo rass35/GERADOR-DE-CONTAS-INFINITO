@@ -1,339 +1,284 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Gerador de Contas InfinitCast</title>
-    <style>
-        :root {
-            --bg: #000;
-            --primary: #FF0000;
-            --secondary: #FFF;
-            --muted: #CCC;
-            --card: #1C1C1E;
-            --highlight: #FF4B4B;
-            --input-bg: #111;
-            --border-color: #333;
-        }
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', sans-serif;
-        }
-        body {
-            background: var(--bg);
-            color: var(--secondary);
-        }
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        header {
-            text-align: center;
-            padding: 36px 20px;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 20px;
-        }
-        header h1 {
-            color: var(--primary);
-            font-size: 2.4rem;
-            margin-bottom: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        header h1::before {
-            content: '🔑 ';
-        }
-        header p {
-            color: var(--muted);
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 18px;
-            margin-top: 20px;
-        }
-        .card {
-            background: var(--card);
-            padding: 16px;
-            border-radius: 14px;
-            border: 1px solid var(--border-color);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        }
-        .card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.2);
-        }
-        .card h2 {
-            color: var(--primary);
-            margin-bottom: 12px;
-            font-size: 1.2rem;
-        }
-        .card-details {
-            margin-top: 8px;
-            font-size: 0.9em;
-            color: var(--muted);
-            word-break: break-all;
-            flex-grow: 1;
-        }
-        .product-image {
-            max-width: 150px;
-            height: 150px;
-            overflow: hidden;
-            border-radius: 10px;
-            margin: 0 auto 12px auto;
-            background-color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 10px;
-            transition: transform 0.3s ease;
-        }
-        .card:hover .product-image img {
-            transform: scale(1.1);
-        }
-        .btn {
-            padding: 10px 14px;
-            border-radius: 8px;
-            background: var(--primary);
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            margin-top: 8px;
-            width: 100%;
-            font-weight: 700;
-            text-transform: uppercase;
-            transition: background-color 0.2s;
-        }
-        .btn:hover {
-            background: var(--highlight);
-        }
-        .btn-small {
-            padding: 6px 10px;
-            font-size: 0.9rem;
-            flex: 1;
-        }
-        input, select, textarea {
-            padding: 10px 12px;
-            width: 100%;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: var(--input-bg);
-            color: var(--secondary);
-            margin-bottom: 10px;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-        }
-        .flex-row {
-            display: flex;
-            gap: 8px;
-        }
-        .form-card {
-            background: var(--card);
-            padding: 20px;
-            border-radius: 14px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 20px;
-        }
-        .form-card h3 {
-            color: var(--primary);
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .modal-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-        }
-        .modal {
-            background: var(--card);
-            padding: 24px;
-            border-radius: 12px;
-            width: min(680px, 92%);
-            border: 1px solid var(--border-color);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
-        }
-        .modal h3 {
-            color: var(--primary);
-            margin-bottom: 15px;
-        }
-        .modal p {
-            line-height: 1.6;
-        }
-        .generated-code {
-            font-family: monospace;
-            background: #0d0d0d;
-            padding: 14px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            margin: 10px 0;
-            word-break: break-all;
-            white-space: pre-wrap;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gerador de Contas InfinitCast</title>
+<style>
+:root {
+    --bg: #000;
+    --primary: #FF0000;
+    --secondary: #FFF;
+    --muted: #CCC;
+    --card: #1C1C1E;
+    --highlight: #FF4B4B;
+    --input-bg: #111;
+    --border-color: #333;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+body { background: var(--bg); color: var(--secondary); }
+.container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+header { text-align: center; padding: 36px 20px; border-bottom: 1px solid var(--border-color); margin-bottom: 20px; }
+header h1 { color: var(--primary); font-size: 2.4rem; margin-bottom: 8px; cursor: pointer; font-weight: bold; }
+header h1::before { content: '🔑 '; }
+header p { color: var(--muted); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-top: 20px; }
+.card { background: var(--card); padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); position: relative; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; }
+.card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 8px 25px rgba(255, 0, 0, 0.2); }
+.card h2 { color: var(--primary); margin-bottom: 12px; font-size: 1.2rem; }
+.card-details { margin-top: 8px; font-size: 0.9em; color: var(--muted); word-break: break-all; flex-grow: 1; }
+.product-image { max-width: 150px; height: 150px; overflow: hidden; border-radius: 10px; margin: 0 auto 12px auto; background-color: #333; display: flex; justify-content: center; align-items: center; }
+.product-image img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; transition: transform 0.3s ease; }
+.card:hover .product-image img { transform: scale(1.1); }
+.btn { padding: 10px 14px; border-radius: 8px; background: var(--primary); border: none; color: #fff; cursor: pointer; margin-top: 8px; width: 100%; font-weight: 700; text-transform: uppercase; transition: background-color 0.2s; }
+.btn:hover { background: var(--highlight); }
+.btn-small { padding: 6px 10px; font-size: 0.9rem; flex: 1; }
+input, select, textarea { padding: 10px 12px; width: 100%; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--secondary); margin-bottom: 10px; font-size: 1rem; transition: border-color 0.2s; }
+.flex-row { display: flex; gap: 8px; }
+.form-card { background: var(--card); padding: 20px; border-radius: 14px; border: 1px solid var(--border-color); margin-bottom: 20px; }
+.form-card h3 { color: var(--primary); margin-bottom: 15px; text-align: center; }
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); display: none; align-items: center; justify-content: center; z-index: 200; }
+.modal { background: var(--card); padding: 24px; border-radius: 12px; width: min(680px, 92%); border: 1px solid var(--border-color); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); }
+.modal h3 { color: var(--primary); margin-bottom: 15px; }
+.modal p { line-height: 1.6; }
+.generated-code { font-family: monospace; background: #0d0d0d; padding: 14px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.03); margin: 10px 0; word-break: break-all; white-space: pre-wrap; }
+a { color: var(--primary); text-decoration: underline; }
+</style>
 </head>
 <body>
-    <!-- Visualização do Gerador -->
-    <main id="generatorView">
-        <header class="container">
-            <h1 id="mainTitle">Gerador de Contas InfinitCast</h1>
-            <p id="userIdDisplay" class="text-sm mt-2 text-center text-muted"></p>
-        </header>
-        <div class="container">
-            <div class="grid" id="generatorGrid"></div>
-        </div>
-    </main>
 
-    <!-- Visualização do Admin -->
-    <main id="adminView" style="display: none;">
-        <header class="container">
-            <h1>⚙️ Painel Admin — Gerador</h1>
-            <p>Adicione, edite ou exclua produtos. Apenas campos preenchidos serão exibidos no site.</p>
-            <button id="backToGeneratorBtn" class="btn" style="width: auto; padding: 10px 20px; margin-top: 20px; background: #555;">Voltar para o Gerador</button>
-        </header>
-        <div class="container">
-            <div class="form-card">
-                <h3 id="formCardTitle">Adicionar Novo Produto</h3>
-                <input type="text" id="nome" placeholder="Nome do Produto *" required>
-                <input type="text" id="categoria" placeholder="Categoria *" required>
-                <input type="url" id="imagem" placeholder="URL da Imagem (opcional)">
-                <textarea id="email" rows="3" placeholder="Emails (um por linha, opcional)"></textarea>
-                <textarea id="senha" rows="3" placeholder="Senhas (um por linha, opcional)"></textarea>
-                <textarea id="link" rows="3" placeholder="Links (um por linha, opcional)"></textarea>
-                <div id="formButtons">
-                    <button class="btn" id="addProduto">Adicionar</button>
-                </div>
-            </div>
-            <h3>Produtos Cadastrados</h3>
-            <div class="grid" id="adminGrid"></div>
-        </div>
-    </main>
+<main id="generatorView">
+<header class="container">
+<h1 id="mainTitle">Gerador de Contas InfinitCast</h1>
+<p id="userIdDisplay" class="text-sm mt-2 text-center text-muted"></p>
+</header>
+<div class="container">
+<div class="grid" id="generatorGrid"></div>
+</div>
+</main>
 
-    <!-- Modal de Geração -->
-    <div class="modal-backdrop" id="modalBackdrop">
-        <div class="modal">
-            <h3>Dados do Produto</h3>
-            <div id="generatedCode" class="generated-code"></div>
-            <div class="flex-row">
-                <button class="btn" id="copyModal" style="background: var(--primary);">Copiar</button>
-                <button class="btn" id="closeModal" style="background: #555;">Fechar</button>
-            </div>
-        </div>
-    </div>
+<main id="adminView" style="display: none;">
+<header class="container">
+<h1>⚙️ Painel Admin — Gerador</h1>
+<p>Adicione, edite ou exclua produtos. Apenas campos preenchidos serão exibidos no site.</p>
+<button id="backToGeneratorBtn" class="btn" style="width: auto; padding: 10px 20px; margin-top: 20px; background: #555;">Voltar para o Gerador</button>
+</header>
+<div class="container">
+<div class="form-card">
+<h3 id="formCardTitle">Adicionar Novo Produto</h3>
+<input type="text" id="nome" placeholder="Nome do Produto *" required>
+<input type="text" id="categoria" placeholder="Categoria *" required>
+<input type="url" id="imagem" placeholder="URL da Imagem (opcional)">
+<textarea id="email" rows="3" placeholder="Emails (um por linha, opcional)"></textarea>
+<textarea id="senha" rows="3" placeholder="Senhas (um por linha, opcional)"></textarea>
+<textarea id="link" rows="3" placeholder="Links (um por linha, opcional)"></textarea>
+<div id="formButtons">
+<button class="btn" id="addProduto">Adicionar</button>
+</div>
+</div>
+<h3>Produtos Cadastrados</h3>
+<div class="grid" id="adminGrid"></div>
+</div>
+</main>
 
-    <!-- Modal de Confirmação de Exclusão -->
-    <div class="modal-backdrop" id="deleteConfirmModal">
-        <div class="modal">
-            <h3>Confirmar Exclusão</h3>
-            <p id="deleteConfirmText">Você tem certeza que deseja excluir este item?</p>
-            <div class="flex-row" style="margin-top: 20px;">
-                <button class="btn" id="confirmDeleteBtn" style="background: var(--primary);">Sim, Excluir</button>
-                <button class="btn" id="cancelDeleteBtn" style="background: #555;">Cancelar</button>
-            </div>
-        </div>
-    </div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
-    <!-- Firebase SDK - Firestore -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyB_0pZHxFYOt46qZid5VpadQ2_Wl2TdEBk",
+  authDomain: "gerador-de-contas-c89b8.firebaseapp.com",
+  databaseURL: "https://gerador-de-contas-c89b8-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "gerador-de-contas-c89b8",
+  storageBucket: "gerador-de-contas-c89b8.appspot.com",
+  messagingSenderId: "392293211277",
+  appId: "1:392293211277:web:8b2f2a9dda2826ec1e16c4",
+  measurementId: "G-ZXVTXLQXT8"
+};
 
-        // Configuração Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyB_0pZHxFYOt46qZid5VpadQ2_Wl2TdEBk",
-            authDomain: "gerador-de-contas-c89b8.firebaseapp.com",
-            databaseURL: "https://gerador-de-contas-c89b8-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "gerador-de-contas-c89b8",
-            storageBucket: "gerador-de-contas-c89b8.appspot.com",
-            messagingSenderId: "392293211277",
-            appId: "1:392293211277:web:8b2f2a9dda2826ec1e16c4",
-            measurementId: "G-ZXVTXLQXT8"
-        };
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const ADMIN_PASSWORD = "123456";
 
-        // Inicializa Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+document.addEventListener('DOMContentLoaded', () => {
+  let produtos = [];
+  let editingId = null;
+  let isAdmin = false;
 
-        // Senha do admin
-        const ADMIN_PASSWORD = "bras87"; // 🔐 Coloque sua senha aqui
+  const generatorView = document.getElementById("generatorView");
+  const adminView = document.getElementById("adminView");
+  const mainTitle = document.getElementById("mainTitle");
+  const backToGeneratorBtn = document.getElementById("backToGeneratorBtn");
+  const generatorGrid = document.getElementById("generatorGrid");
+  const adminGrid = document.getElementById("adminGrid");
+  const nomeInput = document.getElementById("nome");
+  const categoriaInput = document.getElementById("categoria");
+  const imagemInput = document.getElementById("imagem");
+  const emailInput = document.getElementById("email");
+  const senhaInput = document.getElementById("senha");
+  const linkInput = document.getElementById("link");
+  const addProdutoBtn = document.getElementById("addProduto");
 
-        document.addEventListener('DOMContentLoaded', () => {
-            let produtos = [];
-            let editingId = null;
-            let itemIdToDelete = null;
+  let clickCount = 0;
+  let clickTimer = null;
+  mainTitle.addEventListener('click', () => {
+    clickCount++;
+    if (clickTimer) clearTimeout(clickTimer);
+    clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
+    if (clickCount === 5) {
+      clickCount = 0;
+      clearTimeout(clickTimer);
+      const senha = prompt("Digite a senha do admin:");
+      if(senha === ADMIN_PASSWORD){
+        generatorView.style.display = "none";
+        adminView.style.display = "block";
+        isAdmin = true;
+        resetForm();
+      } else alert("Senha incorreta!");
+    }
+  });
 
-            const generatorView = document.getElementById("generatorView");
-            const adminView = document.getElementById("adminView");
-            const mainTitle = document.getElementById("mainTitle");
-            const userIdDisplay = document.getElementById("userIdDisplay");
-            const backToGeneratorBtn = document.getElementById("backToGeneratorBtn");
-            const generatorGrid = document.getElementById("generatorGrid");
-            const modalBackdrop = document.getElementById("modalBackdrop");
-            const generatedCodeEl = document.getElementById("generatedCode");
-            const copyModalBtn = document.getElementById("copyModal");
-            const closeModalBtn = document.getElementById("closeModal");
-            const adminGrid = document.getElementById("adminGrid");
-            const formCardTitle = document.getElementById("formCardTitle");
-            const formButtonsContainer = document.getElementById("formButtons");
-            const nomeInput = document.getElementById("nome");
-            const categoriaInput = document.getElementById("categoria");
-            const imagemInput = document.getElementById("imagem");
-            const emailInput = document.getElementById("email");
-            const senhaInput = document.getElementById("senha");
-            const linkInput = document.getElementById("link");
-            const addProdutoBtn = document.getElementById("addProduto");
-            const deleteConfirmModal = document.getElementById("deleteConfirmModal");
-            const deleteConfirmText = document.getElementById("deleteConfirmText");
-            const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
-            const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+  backToGeneratorBtn.addEventListener('click', () => {
+    generatorView.style.display = "block";
+    adminView.style.display = "none";
+    isAdmin = false;
+    resetForm();
+  });
 
-            // Alternância de views (5 cliques no título para Admin + senha)
-            let clickCount = 0;
-            let clickTimer = null;
-            mainTitle.addEventListener('click', () => {
-                clickCount++;
-                if (clickTimer) clearTimeout(clickTimer);
-                clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
-                if (clickCount === 5) {
-                    clickCount = 0;
-                    clearTimeout(clickTimer);
-                    const senha = prompt("Digite a senha do admin:");
-                    if(senha === ADMIN_PASSWORD){
-                        generatorView.style.display = "none";
-                        adminView.style.display = "block";
-                        resetForm();
-                    } else {
-                        alert("Senha incorreta!");
-                    }
-                }
-            });
+  function resetForm() {
+    nomeInput.value = "";
+    categoriaInput.value = "";
+    imagemInput.value = "";
+    emailInput.value = "";
+    senhaInput.value = "";
+    linkInput.value = "";
+    editingId = null;
+    addProdutoBtn.textContent = "Adicionar";
+  }
 
-            backToGeneratorBtn.addEventListener('click', () => {
-                generatorView.style.display = "block";
-                adminView.style.display = "none";
-                resetForm();
-            });
+  async function salvarProduto(produtoData) {
+    if(!isAdmin) return alert("Somente admin pode adicionar produtos!");
+    try {
+      if(editingId){
+        const docRef = doc(db, "produtos", editingId);
+        await updateDoc(docRef, produtoData);
+      } else {
+        await addDoc(collection(db, "produtos"), produtoData);
+      }
+      resetForm();
+    } catch(e) {
+      console.error("Erro ao salvar produto:", e);
+      alert("Erro ao salvar produto: " + e.message);
+    }
+  }
 
-            // ... restante do código de renderização, CRUD e modais permanece o mesmo
-            // para manter este exemplo mais limpo, você pode copiar a função renderGeneratorCards(),
-            // renderAdminGrid(), resetForm(), addProdutoBtn listener, copyModalBtn listener, etc.
-            // exatamente como já estava no seu código original.
+  addProdutoBtn.addEventListener('click', () => {
+    const nome = nomeInput.value.trim();
+    const categoria = categoriaInput.value.trim();
+    if(!nome || !categoria) return alert("Preencha Nome e Categoria!");
+    const produtoData = {
+      nome,
+      categoria,
+      imagem: imagemInput.value.trim(),
+      email: emailInput.value.trim(),
+      senha: senhaInput.value.trim(),
+      link: linkInput.value.trim()
+    };
+    salvarProduto(produtoData);
+  });
+
+  onSnapshot(collection(db, "produtos"), (snapshot) => {
+    produtos = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+    renderGeneratorCards();
+    renderAdminGrid();
+  });
+
+  function renderGeneratorCards() {
+    generatorGrid.innerHTML = "";
+    produtos.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        ${p.imagem ? `<div class="product-image"><img src="${p.imagem}" alt="${p.nome}"></div>` : ""}
+        <h2>${p.nome} (${p.categoria})</h2>
+        <button class="btn">Gerar</button>
+      `;
+      generatorGrid.appendChild(card);
+
+      card.querySelector(".btn").addEventListener("click", () => {
+        const modalBackdrop = document.createElement("div");
+        modalBackdrop.className = "modal-backdrop";
+        modalBackdrop.style.display = "flex";
+
+        const modal = document.createElement("div");
+        modal.className = "modal";
+
+        const emails = p.email ? p.email.split("\n") : [];
+        const senhas = p.senha ? p.senha.split("\n") : [];
+
+        let emailSenhaHTML = "";
+        const maxLen = Math.max(emails.length, senhas.length);
+        for (let i = 0; i < maxLen; i++) {
+          const e = emails[i] || "";
+          const s = senhas[i] || "";
+          if (e || s) emailSenhaHTML += `<p><strong>Email:</strong> ${e}<br><strong>Senha:</strong> ${s}</p>`;
+        }
+
+        const linksHTML = p.link ? `<p><strong>Links:</strong><br>${p.link.split("\n").map(l => `<a href="${l}" target="_blank">${l}</a>`).join("<br>")}</p>` : "";
+
+        modal.innerHTML = `
+          <h3>${p.nome} (${p.categoria})</h3>
+          ${emailSenhaHTML}
+          ${linksHTML}
+          <button class="btn" style="margin-top: 15px;">Fechar</button>
+        `;
+
+        modalBackdrop.appendChild(modal);
+        document.body.appendChild(modalBackdrop);
+
+        modal.querySelector("button").addEventListener("click", () => {
+          document.body.removeChild(modalBackdrop);
         });
-    </script>
+      });
+    });
+  }
+
+  function renderAdminGrid() {
+    adminGrid.innerHTML = "";
+    produtos.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <h2>${p.nome} (${p.categoria})</h2>
+        <div class="flex-row">
+          <button class="btn btn-small edit">Editar</button>
+          <button class="btn btn-small delete" style="background:#555">Excluir</button>
+        </div>
+      `;
+
+      card.querySelector(".edit").addEventListener("click", () => {
+        editingId = p.id;
+        nomeInput.value = p.nome;
+        categoriaInput.value = p.categoria;
+        imagemInput.value = p.imagem || "";
+        emailInput.value = p.email || "";
+        senhaInput.value = p.senha || "";
+        linkInput.value = p.link || "";
+        addProdutoBtn.textContent = "Salvar Alterações";
+      });
+
+      card.querySelector(".delete").addEventListener("click", async () => {
+        if(confirm(`Deseja realmente excluir "${p.nome}"?`)){
+          try { await deleteDoc(doc(db, "produtos", p.id)); }
+          catch(e){ alert("Erro ao excluir: "+e.message); }
+        }
+      });
+
+      adminGrid.appendChild(card);
+    });
+  }
+});
+</script>
+
 </body>
 </html>
