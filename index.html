@@ -27,7 +27,7 @@ header p { color: var(--muted); }
 .card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 8px 25px rgba(255, 0, 0, 0.2); }
 .card h2 { color: var(--primary); margin-bottom: 12px; font-size: 1.2rem; }
 .card-details { margin-top: 8px; font-size: 0.9em; color: var(--muted); word-break: break-all; flex-grow: 1; }
-.product-image { max-width: 200px; height: 200px; overflow: hidden; border-radius: 10px; margin: 0 auto 12px auto; background-color: #333; display: flex; justify-content: center; align-items: center; }
+.product-image { max-width: 150px; height: 150px; overflow: hidden; border-radius: 10px; margin: 0 auto 12px auto; background-color: #333; display: flex; justify-content: center; align-items: center; }
 .product-image img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; transition: transform 0.3s ease; }
 .card:hover .product-image img { transform: scale(1.1); }
 .btn { padding: 10px 14px; border-radius: 8px; background: var(--primary); border: none; color: #fff; cursor: pointer; margin-top: 8px; width: 100%; font-weight: 700; text-transform: uppercase; transition: background-color 0.2s; }
@@ -41,6 +41,7 @@ input, select, textarea { padding: 10px 12px; width: 100%; border-radius: 8px; b
 .modal { background: var(--card); padding: 24px; border-radius: 12px; width: min(680px, 92%); border: 1px solid var(--border-color); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); }
 .modal h3 { color: var(--primary); margin-bottom: 15px; }
 .modal p { line-height: 1.6; }
+.modal-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px; }
 .generated-code { font-family: monospace; background: #0d0d0d; padding: 14px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.03); margin: 10px 0; word-break: break-all; white-space: pre-wrap; }
 </style>
 </head>
@@ -97,7 +98,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const ADMIN_PASSWORD = "bras87";
+const ADMIN_PASSWORD = "123456";
 
 document.addEventListener('DOMContentLoaded', () => {
   let produtos = [];
@@ -208,19 +209,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const emails = p.email ? p.email.split("\n") : [];
         const senhas = p.senha ? p.senha.split("\n") : [];
         const links = p.link ? p.link.split("\n") : [];
-        const maxLen = Math.max(emails.length, senhas.length);
-
-        let emailSenhaHTML = "";
-        for(let i=0; i<maxLen; i++){
-          const e = emails[i] || "";
-          const s = senhas[i] || "";
-          if(e || s) emailSenhaHTML += `<p><strong>Email:</strong> ${e}<br><strong>Senha:</strong> ${s}</p>`;
-        }
-
-        let linksHTML = "";
-        if(links.length){
-          linksHTML = `<p><strong>Links:</strong><br>${links.map(l=>`<a href="${l}" target="_blank" style="color:#fff; text-decoration:underline;">${l}</a>`).join("<br>")}</p>`;
-        }
 
         const modalBackdrop = document.createElement("div");
         modalBackdrop.className = "modal-backdrop";
@@ -228,31 +216,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const modal = document.createElement("div");
         modal.className = "modal";
-        modal.innerHTML = `
-          <h3>${p.nome} (${p.categoria})</h3>
-          ${emailSenhaHTML}
-          ${linksHTML}
-          <div class="flex-row" style="gap:10px; margin-top:15px;">
-            <button class="btn copiar">Copiar</button>
+
+        let contentHTML = `<h3>${p.nome} (${p.categoria})</h3>`;
+
+        for(let i = 0; i < Math.max(emails.length, senhas.length); i++){
+  const e = emails[i] || "";
+  const s = senhas[i] || "";
+  if(e || s){
+    contentHTML += `<p><strong>Email:</strong> ${e}<br><strong>Senha:</strong> ${s}</p>`;
+  }
+}
+
+
+        if(links.length > 0){
+          contentHTML += `<p><strong>Links:</strong><br>${links.map(l => `<a href="${l}" target="_blank" style="color: var(--primary)">${l}</a>`).join("<br>")}</p>`;
+        }
+
+        contentHTML += `<div class="modal-buttons">
             <button class="btn fechar">Fechar</button>
-          </div>
-        `;
+            <button class="btn copiar">Copiar</button>
+          </div>`;
+
+        modal.innerHTML = contentHTML;
         modalBackdrop.appendChild(modal);
         document.body.appendChild(modalBackdrop);
 
+        modal.querySelector(".fechar").addEventListener("click", () => {
+          document.body.removeChild(modalBackdrop);
+        });
+
         modal.querySelector(".copiar").addEventListener("click", () => {
           let copyText = "";
-          for(let i=0; i<maxLen; i++){
+          for(let i = 0; i < Math.max(emails.length, senhas.length); i++){
             const e = emails[i] || "";
             const s = senhas[i] || "";
             if(e || s) copyText += `Email: ${e}\nSenha: ${s}\n\n`;
           }
-          navigator.clipboard.writeText(copyText).then(()=>alert("Emails e senhas copiados!"))
-          .catch(()=>alert("Erro ao copiar!"));
-        });
-
-        modal.querySelector(".fechar").addEventListener("click", () => {
-          document.body.removeChild(modalBackdrop);
+          navigator.clipboard.writeText(copyText).then(() => {
+            let msg = document.createElement("span");
+            msg.textContent = "Copiado!";
+            msg.style.color = "#fff";
+            msg.style.background = "var(--primary)";
+            msg.style.padding = "4px 8px";
+            msg.style.borderRadius = "6px";
+            msg.style.marginLeft = "10px";
+            msg.style.fontSize = "0.9rem";
+            modal.querySelector(".copiar").parentNode.appendChild(msg);
+            setTimeout(() => msg.remove(), 2000);
+          });
         });
       });
     });
@@ -297,4 +308,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
-
