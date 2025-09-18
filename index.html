@@ -40,7 +40,7 @@ input, select, textarea { padding: 10px 12px; width: 100%; border-radius: 8px; b
 .modal-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); display: none; align-items: center; justify-content: center; z-index: 200; }
 .modal { background: var(--card); padding: 24px; border-radius: 12px; width: min(680px, 92%); border: 1px solid var(--border-color); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8); }
 .modal h3 { color: var(--primary); margin-bottom: 15px; }
-.modal p { line-height: 1.6; }
+.modal p { line-height: 1.6; color: var(--secondary); }
 .generated-code { font-family: monospace; background: #0d0d0d; padding: 14px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.03); margin: 10px 0; word-break: break-all; white-space: pre-wrap; }
 a { color: var(--primary); text-decoration: underline; }
 </style>
@@ -206,37 +206,53 @@ document.addEventListener('DOMContentLoaded', () => {
       generatorGrid.appendChild(card);
 
       card.querySelector(".btn").addEventListener("click", () => {
+        const emails = p.email ? p.email.split("\n") : [];
+        const senhas = p.senha ? p.senha.split("\n") : [];
+        const links = p.link ? p.link.split("\n") : [];
+        const maxLen = Math.max(emails.length, senhas.length);
+
+        let emailSenhaHTML = "";
+        for(let i=0; i<maxLen; i++){
+          const e = emails[i] || "";
+          const s = senhas[i] || "";
+          if(e || s) emailSenhaHTML += `<p><strong>Email:</strong> ${e} | <strong>Senha:</strong> ${s}</p>`;
+        }
+
+        let linksHTML = "";
+        if(links.length){
+          linksHTML = `<p><strong>Links:</strong><br>${links.map(l=>`<a href="${l}" target="_blank">${l}</a>`).join("<br>")}</p>`;
+        }
+
         const modalBackdrop = document.createElement("div");
         modalBackdrop.className = "modal-backdrop";
         modalBackdrop.style.display = "flex";
 
         const modal = document.createElement("div");
         modal.className = "modal";
-
-        const emails = p.email ? p.email.split("\n") : [];
-        const senhas = p.senha ? p.senha.split("\n") : [];
-
-        let emailSenhaHTML = "";
-        const maxLen = Math.max(emails.length, senhas.length);
-        for (let i = 0; i < maxLen; i++) {
-          const e = emails[i] || "";
-          const s = senhas[i] || "";
-          if (e || s) emailSenhaHTML += `<p><strong>Email:</strong> ${e}<br><strong>Senha:</strong> ${s}</p>`;
-        }
-
-        const linksHTML = p.link ? `<p><strong>Links:</strong><br>${p.link.split("\n").map(l => `<a href="${l}" target="_blank">${l}</a>`).join("<br>")}</p>` : "";
-
         modal.innerHTML = `
           <h3>${p.nome} (${p.categoria})</h3>
           ${emailSenhaHTML}
           ${linksHTML}
-          <button class="btn" style="margin-top: 15px;">Fechar</button>
+          <div class="flex-row" style="gap:10px; margin-top:15px;">
+            <button class="btn copiar">Copiar</button>
+            <button class="btn fechar">Fechar</button>
+          </div>
         `;
-
         modalBackdrop.appendChild(modal);
         document.body.appendChild(modalBackdrop);
 
-        modal.querySelector("button").addEventListener("click", () => {
+        modal.querySelector(".copiar").addEventListener("click", () => {
+          let copyText = "";
+          for(let i=0; i<maxLen; i++){
+            const e = emails[i] || "";
+            const s = senhas[i] || "";
+            if(e || s) copyText += `Email: ${e} | Senha: ${s}\n`;
+          }
+          navigator.clipboard.writeText(copyText).then(()=>alert("Emails e senhas copiados!"))
+          .catch(()=>alert("Erro ao copiar!"));
+        });
+
+        modal.querySelector(".fechar").addEventListener("click", () => {
           document.body.removeChild(modalBackdrop);
         });
       });
@@ -282,3 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
+
+
